@@ -1,0 +1,13 @@
+crewai[anthropic]>=1.15.0
+pandas>=2.2
+numpy>=1.26
+scikit-learn>=1.5
+statsmodels>=0.14
+scipy>=1.13
+joblib>=1.4
+pyarrow>=15.0
+python-dotenv>=1.0
+streamlit>=1.38
+chainlit>=2.0
+bcrypt>=4.0
+matplotlib>=3.8

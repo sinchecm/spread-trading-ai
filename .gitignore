@@ -1,0 +1,26 @@
+# secrets
+.env
+
+# python
+__pycache__/
+*.pyc
+
+# logs
+*.log
+
+# generated pipeline outputs (regenerable via the pipeline, see README)
+outputs/
+
+# raw market data - not checked into the repo, add via the Streamlit uploader (see README)
+/MHI_1min.csv
+/HHI_1min.csv
+
+# per-trader chat data (private per-user strategies/results)
+chat_app/user_data/
+
+# chainlit runtime/generated files
+.chainlit/
+.files/
+
+# local Claude Code settings (machine-specific tool permissions)
+.claude/settings.local.json
