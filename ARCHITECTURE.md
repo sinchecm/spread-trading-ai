@@ -241,7 +241,11 @@ interpreter against a whitelist of ~15 named variables and a fixed operator set 
 confirms the plain-English restatement does `run_backtest_for_strategy` (the exact same
 function the CLI/Streamlit pipeline uses) actually compute a result. Each trader's
 strategies and results are isolated under `chat_app/user_data/<username>/`, keyed off
-`cl.User.identifier` set by the bcrypt-verified login.
+`cl.User.identifier` set by the bcrypt-verified login. This boundary is exercised by
+`tests/test_dsl_tools.py` — dozens of sandbox-escape attempts (attribute/subscript access,
+`eval`/`exec`/`__import__`, comprehensions, walrus, disallowed operators, etc.) are
+asserted to always raise `SafeExpressionError` rather than silently succeeding or leaking
+a different exception type. See the README's **Tests** section to run it.
 
 **Grid mode:** for multi-lot "ladder" strategies (not expressible as a single boolean DSL
 expression), the LLM instead fills structured `grid_*` fields — anchor

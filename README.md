@@ -139,6 +139,22 @@ print(compile_final_report.func())
 "
 ```
 
+## Tests
+
+```bash
+pip install -r requirements-dev.txt
+pytest
+```
+
+Coverage currently focuses on `pair_crew/tools/dsl_tools.py` -- the sandboxed expression
+DSL the chat frontend's LLM writes into. Since that's the security boundary between
+untrusted LLM-authored text and this process, `tests/test_dsl_tools.py` exhaustively
+checks that sandbox-escape attempts (attribute/subscript access, `eval`/`exec`/`__import__`,
+comprehensions, walrus, disallowed operators, etc.) are all rejected, alongside operator
+semantics, the `compile_strategy_params` entry/exit contract, the HKT hour-of-day
+conversion (including the midnight-wrap edge case), and the plausibility-warning
+heuristics.
+
 ## Outputs
 
 All intermediate and final artifacts land in `outputs/`:
