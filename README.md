@@ -1,5 +1,7 @@
 # MHI / HHI Pair Trading — CrewAI Multi-Agent Workflow
 
+[![GitHub](https://img.shields.io/badge/GitHub-spread--trading--ai-181717?logo=github&logoColor=white)](https://github.com/sinchecm/spread-trading-ai)
+
 A three-agent [CrewAI](https://github.com/crewAIInc/crewAI) workflow that discovers and
 evaluates a pair-trading strategy for HKEX Mini-Hang Seng Index (MHI) and Hang Seng China
 Enterprises Index (HHI) futures, from raw 1-minute CSVs to a final, risk-screened strategy
