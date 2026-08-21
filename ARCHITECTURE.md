@@ -17,7 +17,7 @@ they're triggered:
 |---|---|---|---|
 | CLI | `main.py` | direct pipeline run from the terminal | Yes — 3-agent CrewAI crew narrates/orchestrates the deterministic tools |
 | Web dashboard | `app.py` (Streamlit, port 8502) | fast iteration on data/results | No — runs the deterministic tools directly, no API key needed |
-| Trader chat | `chat_app/app.py` (Chainlit, port 8000) | a desk of traders, each with their own login | Yes — only for translating plain-language strategy descriptions into a safe DSL; never for computing P&L |
+| Trader chat | `chat_app/app.py` (Chainlit, default port 8000 — see §9 for this environment's actual port) | a desk of traders, each with their own login | Yes — only for translating plain-language strategy descriptions into a safe DSL; never for computing P&L |
 
 ## 2. System Design
 
@@ -31,7 +31,7 @@ flowchart TB
     subgraph EntryPoints["Entry Points"]
         CLI["main.py\nCLI"]
         ST["app.py\nStreamlit :8502"]
-        Chat["chat_app/app.py\nChainlit :8000"]
+        Chat["chat_app/app.py\nChainlit"]
     end
 
     subgraph CrewLayer["CLI-only: CrewAI orchestration"]
@@ -262,10 +262,26 @@ they're reachable over the LAN, not just localhost:
 
 | App | Port | Launch command |
 |---|---|---|
-| Chat app (Chainlit) | 8000 | `chainlit run chat_app/app.py --host 0.0.0.0 -h` |
-| Streamlit dashboard | 8502 | `streamlit run app.py --server.port 8502 --server.address 0.0.0.0` |
+| Chat app (Chainlit) | 8010 | `chainlit run chat_app/app.py --headless --host 0.0.0.0 --port 8010` |
+| Streamlit dashboard | 8502 | `streamlit run app.py --server.headless true --server.port 8502` |
 | CLI | — | `python main.py` (one-shot, not a server) |
 
 None of these use `--watch`/auto-reload, so a code change requires killing and
-relaunching the process to take effect. Port 8501 is occupied by an unrelated process on
-this machine — the Streamlit dashboard intentionally runs on 8502 instead.
+relaunching the process to take effect. Chainlit's own default port is 8000 and
+Streamlit's is 8501, but both defaults are occupied by unrelated processes on this
+machine (an unrelated FastAPI/uvicorn service on 8000, a different project's Streamlit
+app on 8501) — hence 8010/8502 here. Also note current chainlit versions parse `-h` as
+`--headless` (a boolean flag), not a host argument as some older docs imply; use
+`--host` explicitly.
+
+This environment is currently WSL2: `hostname -I` reports internal WSL/Docker-bridge
+addresses, not a real LAN-facing IP, so reaching either app from another physical
+machine on the office LAN needs a Windows-host port-forward into this WSL instance —
+binding `0.0.0.0` alone isn't sufficient here the way it would be on a bare-metal
+office PC.
+
+**Headless verification:** `.claude/skills/run-spread-trading-ai/` has a Playwright-based
+driver (`driver.py`) plus a `SKILL.md` documenting how to launch and drive both web apps
+end-to-end (login, DSL translation, backtest, screenshots) from a script — including the
+NSS-library and React-controlled-textarea workarounds this container needed. Use it
+instead of re-discovering those from scratch when verifying a change to either frontend.
